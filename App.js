@@ -1,48 +1,50 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from "react-native";
 import Animated, {
   useSharedValue,
   withSpring,
+  withTiming,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import {
+  GestureHandlerRootView,
+  Gesture,
+  GestureDetector,
+} from "react-native-gesture-handler";
+import ListItem from "./components/ListItem";
+
+const BACKGROUND_COLOR = "#FAFBFF";
 
 export default function App() {
-  const translateX = useSharedValue(0);
-  const handlePress = () => {
-    translateX.value = withSpring(translateX.value + 50);
-  };
-  const animatedStyle = useAnimatedStyle(
-    () => ({
-      transform: [{ translateX: withSpring(translateX.value * 2) }],
-    }),
-    []
-  );
+  const todos = [
+    "Learn basics of reanimated",
+    "Learn about react native gesture handlers",
+    "Add them both to create desired animations",
+    "Integrate in food application",
+  ];
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.box, animatedStyle]} />
-      <Button onPress={handlePress} title="Click me" />
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>TODOS</Text>
+        <ScrollView style={{ flex: 1 }}>
+          {todos.map((todo, index) => (
+            <ListItem todo={todo} index={index} key={todo} />
+          ))}
+        </ScrollView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: BACKGROUND_COLOR,
   },
-  box: {
-    height: 120,
-    width: 120,
-    backgroundColor: "#b58df1",
-    borderRadius: 20,
-    marginVertical: 50,
-  },
-  button: {
-    color: "white",
-    backgroundColor: "blue",
-    padding: 10,
+  title: {
+    fontSize: 60,
+    marginVertical: 20,
+    paddingLeft: "5%",
   },
 });
