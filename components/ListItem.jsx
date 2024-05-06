@@ -5,12 +5,13 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  runOnJS,
 } from "react-native-reanimated";
 
 const LIST_ITEM_HEIGHT = 70;
 const { width } = Dimensions.get("window");
 const THRESHOLDX = -width * 0.3;
-const ListItem = ({ index, todo }) => {
+const ListItem = ({ index, todo, onDismiss }) => {
   const offsetX = useSharedValue(0);
   const deleteContOpacity = useSharedValue(1);
   const itemHeight = useSharedValue(LIST_ITEM_HEIGHT);
@@ -25,7 +26,11 @@ const ListItem = ({ index, todo }) => {
         offsetX.value = withTiming(-width);
         itemHeight.value = withTiming(0);
         marginVertical.value = withTiming(0);
-        deleteContOpacity.value = withTiming(0);
+        deleteContOpacity.value = withTiming(0, undefined, (finished) => {
+          if (finished) {
+            runOnJS(onDismiss)(todo);
+          }
+        });
       } else {
         offsetX.value = withTiming(0);
       }
@@ -42,8 +47,10 @@ const ListItem = ({ index, todo }) => {
     return {
       height: itemHeight.value,
       marginVertical: marginVertical.value,
+      opacity: deleteContOpacity.value,
     };
   });
+
   return (
     <GestureDetector gesture={pan}>
       <Animated.View style={[styles.todoContainer, containerStyle]}>
@@ -62,7 +69,7 @@ const styles = StyleSheet.create({
   todoContainer: {
     width: "100%",
     alignItems: "center",
-    marginVertical: 10,
+    // marginVertical: 10,
   },
   todo: {
     width: "90%",

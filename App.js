@@ -23,13 +23,22 @@ export default function App() {
     "Integrate in food application",
   ];
 
+  const deleteItem = (item) => {
+    todos.filter((todo) => todo === item);
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>TODOS</Text>
         <ScrollView style={{ flex: 1 }}>
           {todos.map((todo, index) => (
-            <ListItem todo={todo} index={index} key={todo} />
+            <ListItem
+              todo={todo}
+              index={index}
+              key={todo}
+              onDismiss={deleteItem}
+            />
           ))}
         </ScrollView>
       </SafeAreaView>
